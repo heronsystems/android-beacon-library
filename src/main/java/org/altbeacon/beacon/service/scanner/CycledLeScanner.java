@@ -101,8 +101,8 @@ public abstract class CycledLeScanner {
     }
 
     public void setRangeUpdatePeriods(long rangeUpdatePeriod, long betweenRangeUpdate) {
-        mIsMidScanRangeUpdate = true;
         mMidScanRangeUpdatePeriod = rangeUpdatePeriod;
+        mIsMidScanRangeUpdate = true;
     }
 
     /**

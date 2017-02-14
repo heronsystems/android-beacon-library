@@ -249,7 +249,7 @@ public class BeaconManager {
     }
 
     public void setForegroundBetweenRangeUpdatePeriod(long p) {
-        foregroundRangeUpdatePeriod = p;
+        foregroundBetweenRangeUpdatePeriod = p;
     }
 
 

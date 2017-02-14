@@ -43,6 +43,8 @@ public class StartRMData implements Serializable, Parcelable {
     public StartRMData(Region region, String callbackPackageName) {
         this.region = region;
         this.callbackPackageName = callbackPackageName;
+
+        this.hasMidCycleRangUpdate = false;
     }
     public StartRMData(long scanPeriod, long betweenScanPeriod, boolean backgroundFlag) {
         this.scanPeriod = scanPeriod;
