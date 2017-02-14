@@ -198,7 +198,6 @@ public class BeaconManager {
      * @param p
      */
     public void setForegroundScanPeriod(long p) {
-        foregroundRangeMidScan = true;
         foregroundScanPeriod = p;
     }
 
@@ -223,7 +222,6 @@ public class BeaconManager {
      * @param p
      */
     public void setBackgroundScanPeriod(long p) {
-        backgroundRangeMidScan = true;
         backgroundScanPeriod = p;
     }
 
@@ -237,6 +235,7 @@ public class BeaconManager {
     }
 
     public void setBackgroundRangeUpdatePeriod(long p) {
+        foregroundRangeMidScan = true;
         backgroundRangeUpdatePeriod = p;
     }
 
@@ -245,6 +244,8 @@ public class BeaconManager {
     }
 
     public void setForegroundRangeUpdatePeriod(long p) {
+
+        backgroundRangeMidScan = true;
         foregroundRangeUpdatePeriod = p;
     }
 
