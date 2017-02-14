@@ -34,12 +34,16 @@ public abstract class CycledLeScanner {
     private long mScanCycleStopTime = 0l;
     private long mLastScanStopTime = 0l;
 
+
+    private long mRangeCycleUpdateTime = 0l;
+
     private boolean mScanning;
     protected boolean mScanningPaused;
     private boolean mScanCyclerStarted = false;
     private boolean mScanningEnabled = false;
     protected final Context mContext;
     private long mScanPeriod;
+    private long mScanRangeUpdatePeriod;
 
     protected long mBetweenScanPeriod;
 
@@ -94,6 +98,10 @@ public abstract class CycledLeScanner {
             return new CycledLeScannerForJellyBeanMr2(context, scanPeriod, betweenScanPeriod, backgroundFlag, cycledLeScanCallback, crashResolver);
         }
 
+    }
+
+    public void setRangeUpdatePeriods(long rangeUpdatePeriod, long betweenRangeUpdate) {
+        mScanRangeUpdatePeriod = rangeUpdatePeriod;
     }
 
     /**
@@ -226,7 +234,9 @@ public abstract class CycledLeScanner {
                     LogManager.d(TAG, "We are already scanning");
                 }
                 mScanCycleStopTime = (SystemClock.elapsedRealtime() + mScanPeriod);
+                mRangeCycleUpdateTime = (SystemClock.elapsedRealtime() + mScanRangeUpdatePeriod);
                 scheduleScanCycleStop();
+                scheduleCycleRangeUpdate();
 
                 LogManager.d(TAG, "Scan started");
             } else {
@@ -242,7 +252,26 @@ public abstract class CycledLeScanner {
         }
     }
 
+    protected  void scheduleCycleRangeUpdate() {
+        //Update Range after a pre-defined update period.
+        long milliscondsUntilRangeUpdate = mRangeCycleUpdateTime - SystemClock.elapsedRealtime();
+        if(milliscondsUntilRangeUpdate > 0 ) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    scheduleCycleRangeUpdate();
+                }
+            }, milliscondsUntilRangeUpdate > 1000 ? 1000 : milliscondsUntilRangeUpdate);
+        }
+        else {
+            mCycledLeScanCallback.onMidScanRange();
+            mRangeCycleUpdateTime = (SystemClock.elapsedRealtime() + mScanRangeUpdatePeriod);
+            scheduleCycleRangeUpdate();
+        }
+    }
+
     protected void scheduleScanCycleStop() {
+
         // Stops scanning after a pre-defined scan period.
         long millisecondsUntilStop = mScanCycleStopTime - SystemClock.elapsedRealtime();
         if (millisecondsUntilStop > 0) {

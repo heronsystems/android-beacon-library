@@ -8,4 +8,5 @@ import android.bluetooth.BluetoothDevice;
 public interface CycledLeScanCallback {
     public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord);
     public void onCycleEnd();
+    public void onMidScanRange();
 }
