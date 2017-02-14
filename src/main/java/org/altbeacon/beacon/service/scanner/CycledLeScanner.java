@@ -34,7 +34,7 @@ public abstract class CycledLeScanner {
     private long mScanCycleStopTime = 0l;
     private long mLastScanStopTime = 0l;
 
-
+    private boolean mIsMidScanRangeUpdate = false;
     private long mRangeCycleUpdateTime = 0l;
 
     private boolean mScanning;
@@ -43,7 +43,7 @@ public abstract class CycledLeScanner {
     private boolean mScanningEnabled = false;
     protected final Context mContext;
     private long mScanPeriod;
-    private long mScanRangeUpdatePeriod;
+    private long mMidScanRangeUpdatePeriod;
 
     protected long mBetweenScanPeriod;
 
@@ -101,7 +101,8 @@ public abstract class CycledLeScanner {
     }
 
     public void setRangeUpdatePeriods(long rangeUpdatePeriod, long betweenRangeUpdate) {
-        mScanRangeUpdatePeriod = rangeUpdatePeriod;
+        mIsMidScanRangeUpdate = true;
+        mMidScanRangeUpdatePeriod = rangeUpdatePeriod;
     }
 
     /**
@@ -234,9 +235,11 @@ public abstract class CycledLeScanner {
                     LogManager.d(TAG, "We are already scanning");
                 }
                 mScanCycleStopTime = (SystemClock.elapsedRealtime() + mScanPeriod);
-                mRangeCycleUpdateTime = (SystemClock.elapsedRealtime() + mScanRangeUpdatePeriod);
+                mRangeCycleUpdateTime = (SystemClock.elapsedRealtime() + mMidScanRangeUpdatePeriod);
                 scheduleScanCycleStop();
-                scheduleCycleRangeUpdate();
+                if(mIsMidScanRangeUpdate == true) {
+                    scheduleCycleRangeUpdate();
+                }
 
                 LogManager.d(TAG, "Scan started");
             } else {
@@ -265,7 +268,7 @@ public abstract class CycledLeScanner {
         }
         else {
             mCycledLeScanCallback.onMidScanRange();
-            mRangeCycleUpdateTime = (SystemClock.elapsedRealtime() + mScanRangeUpdatePeriod);
+            mRangeCycleUpdateTime = (SystemClock.elapsedRealtime() + mMidScanRangeUpdatePeriod);
             scheduleCycleRangeUpdate();
         }
     }

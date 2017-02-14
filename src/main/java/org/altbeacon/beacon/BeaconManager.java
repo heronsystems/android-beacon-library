@@ -181,6 +181,9 @@ public class BeaconManager {
     private long backgroundScanPeriod = DEFAULT_BACKGROUND_SCAN_PERIOD;
     private long backgroundBetweenScanPeriod = DEFAULT_BACKGROUND_BETWEEN_SCAN_PERIOD;
 
+    private boolean backgroundRangeMidScan = false;
+    private boolean foregroundRangeMidScan = false;
+
     private long backgroundRangeUpdatePeriod = DEFAULT_BACKGROUND_RANGE_UPDATE_PERIOD;
     private long backgroundBetweenRangeUpdatePeriod = DEFAULT_BACKGROUND_BETWEEN_RANGE_UPDATE_PERIOD;
     private long foregroundRangeUpdatePeriod = DEFAULT_FOREGROUND_RANGE_UPDATE_PERIOD;
@@ -195,6 +198,7 @@ public class BeaconManager {
      * @param p
      */
     public void setForegroundScanPeriod(long p) {
+        foregroundRangeMidScan = true;
         foregroundScanPeriod = p;
     }
 
@@ -219,6 +223,7 @@ public class BeaconManager {
      * @param p
      */
     public void setBackgroundScanPeriod(long p) {
+        backgroundRangeMidScan = true;
         backgroundScanPeriod = p;
     }
 
@@ -243,7 +248,7 @@ public class BeaconManager {
         foregroundRangeUpdatePeriod = p;
     }
 
-    public void setForgroundBetweenRangeUpdatePeriod(long p) {
+    public void setForegroundBetweenRangeUpdatePeriod(long p) {
         foregroundRangeUpdatePeriod = p;
     }
 
@@ -648,7 +653,13 @@ public class BeaconManager {
             throw new RemoteException("The BeaconManager is not bound to the service.  Call beaconManager.bind(BeaconConsumer consumer) and wait for a callback to onBeaconServiceConnect()");
         }
         Message msg = Message.obtain(null, BeaconService.MSG_START_RANGING, 0, 0);
-        StartRMData obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
+        StartRMData obj;
+        if (this.isRangeUpdateMidCycle()) {
+            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
+        }
+        else {
+            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode);
+        }
         msg.obj = obj;
         serviceMessenger.send(msg);
         synchronized (rangedRegions) {
@@ -676,7 +687,13 @@ public class BeaconManager {
             throw new RemoteException("The BeaconManager is not bound to the service.  Call beaconManager.bind(BeaconConsumer consumer) and wait for a callback to onBeaconServiceConnect()");
         }
         Message msg = Message.obtain(null, BeaconService.MSG_STOP_RANGING, 0, 0);
-        StartRMData obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
+        StartRMData obj;
+        if (this.isRangeUpdateMidCycle()) {
+            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
+        }
+        else {
+            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode);
+        }
         msg.obj = obj;
         serviceMessenger.send(msg);
         synchronized (rangedRegions) {
@@ -739,7 +756,13 @@ public class BeaconManager {
             throw new RemoteException("The BeaconManager is not bound to the service.  Call beaconManager.bind(BeaconConsumer consumer) and wait for a callback to onBeaconServiceConnect()");
         }
         Message msg = Message.obtain(null, BeaconService.MSG_STOP_MONITORING, 0, 0);
-        StartRMData obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
+        StartRMData obj;
+        if (this.isRangeUpdateMidCycle()) {
+            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
+        }
+        else {
+            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode);
+        }
         msg.obj = obj;
         serviceMessenger.send(msg);
     }
@@ -763,7 +786,14 @@ public class BeaconManager {
         Message msg = Message.obtain(null, BeaconService.MSG_SET_SCAN_PERIODS, 0, 0);
         LogManager.d(TAG, "updating background flag to %s", mBackgroundMode);
         LogManager.d(TAG, "updating scan period to %s, %s", this.getScanPeriod(), this.getBetweenScanPeriod());
-        StartRMData obj = new StartRMData(this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
+        StartRMData obj;
+        if (this.isRangeUpdateMidCycle()) {
+            obj = new StartRMData(this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
+        }
+        else
+        {
+            obj = new StartRMData(this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode);
+        }
         msg.obj = obj;
         serviceMessenger.send(msg);
     }
@@ -940,6 +970,15 @@ public class BeaconManager {
             return backgroundBetweenScanPeriod;
         } else {
             return foregroundBetweenScanPeriod;
+        }
+    }
+
+    private boolean isRangeUpdateMidCycle() {
+        if(mBackgroundMode) {
+            return backgroundRangeMidScan;
+        }
+        else {
+            return foregroundRangeMidScan;
         }
     }
 
