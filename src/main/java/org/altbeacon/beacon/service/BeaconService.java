@@ -155,25 +155,40 @@ public class BeaconService extends Service {
                         LogManager.i(TAG, "start ranging received");
                         service.startRangingBeaconsInRegion(startRMData.getRegionData(), new org.altbeacon.beacon.service.Callback(startRMData.getCallbackPackageName()));
                         service.setScanPeriods(startRMData.getScanPeriod(), startRMData.getBetweenScanPeriod(), startRMData.getBackgroundFlag());
+                        if(startRMData.hasMidCycleRangeUpdates()) {
+                            service.setRangeUpdatePeriods(startRMData.getRangeUpdatePeriod(), startRMData.getBetweenRangeUpdatePeriod());
+                        }
                         break;
                     case MSG_STOP_RANGING:
                         LogManager.i(TAG, "stop ranging received");
                         service.stopRangingBeaconsInRegion(startRMData.getRegionData());
                         service.setScanPeriods(startRMData.getScanPeriod(), startRMData.getBetweenScanPeriod(), startRMData.getBackgroundFlag());
+                        if(startRMData.hasMidCycleRangeUpdates()) {
+                            service.setRangeUpdatePeriods(startRMData.getRangeUpdatePeriod(), startRMData.getBetweenRangeUpdatePeriod());
+                        }
                         break;
                     case MSG_START_MONITORING:
                         LogManager.i(TAG, "start monitoring received");
                         service.startMonitoringBeaconsInRegion(startRMData.getRegionData(), new org.altbeacon.beacon.service.Callback(startRMData.getCallbackPackageName()));
                         service.setScanPeriods(startRMData.getScanPeriod(), startRMData.getBetweenScanPeriod(), startRMData.getBackgroundFlag());
+                        if(startRMData.hasMidCycleRangeUpdates()) {
+                            service.setRangeUpdatePeriods(startRMData.getRangeUpdatePeriod(), startRMData.getBetweenRangeUpdatePeriod());
+                        }
                         break;
                     case MSG_STOP_MONITORING:
                         LogManager.i(TAG, "stop monitoring received");
                         service.stopMonitoringBeaconsInRegion(startRMData.getRegionData());
                         service.setScanPeriods(startRMData.getScanPeriod(), startRMData.getBetweenScanPeriod(), startRMData.getBackgroundFlag());
+                        if(startRMData.hasMidCycleRangeUpdates()) {
+                            service.setRangeUpdatePeriods(startRMData.getRangeUpdatePeriod(), startRMData.getBetweenRangeUpdatePeriod());
+                        }
                         break;
                     case MSG_SET_SCAN_PERIODS:
                         LogManager.i(TAG, "set scan intervals received");
                         service.setScanPeriods(startRMData.getScanPeriod(), startRMData.getBetweenScanPeriod(), startRMData.getBackgroundFlag());
+                        if(startRMData.hasMidCycleRangeUpdates()) {
+                            service.setRangeUpdatePeriods(startRMData.getRangeUpdatePeriod(), startRMData.getBetweenRangeUpdatePeriod());
+                        }
                         break;
                     default:
                         super.handleMessage(msg);
@@ -343,6 +358,10 @@ public class BeaconService extends Service {
         mCycledScanner.setScanPeriods(scanPeriod, betweenScanPeriod, backgroundFlag);
     }
 
+    public void setRangeUpdatePeriods(long rangeUpdatePeriod, long betweenRangeUpdatePeriod) {
+        mCycledScanner.setRangeUpdatePeriods(rangeUpdatePeriod, betweenRangeUpdatePeriod);
+    }
+
     protected final CycledLeScanCallback mCycledLeScanCallback = new CycledLeScanCallback() {
         @TargetApi(Build.VERSION_CODES.HONEYCOMB)
         @Override
@@ -356,6 +375,11 @@ public class BeaconService extends Service {
             } catch (RejectedExecutionException e) {
                 LogManager.w(TAG, "Ignoring scan result because we cannot keep up.");
             }
+        }
+
+        @Override
+        public void onMidScanRange() {
+            processRangeData();
         }
 
         @Override

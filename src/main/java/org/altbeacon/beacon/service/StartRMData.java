@@ -34,17 +34,34 @@ public class StartRMData implements Serializable, Parcelable {
     private Region region;
     private long scanPeriod;
     private long betweenScanPeriod;
+    private boolean hasMidCycleRangUpdate;
+    private long rangeUpdatePeriod;
+    private long betweenRangeUpdatePeriod;
     private boolean backgroundFlag;
     private String callbackPackageName;
 
     public StartRMData(Region region, String callbackPackageName) {
         this.region = region;
         this.callbackPackageName = callbackPackageName;
+
+        this.hasMidCycleRangUpdate = false;
     }
     public StartRMData(long scanPeriod, long betweenScanPeriod, boolean backgroundFlag) {
         this.scanPeriod = scanPeriod;
         this.betweenScanPeriod = betweenScanPeriod;
         this.backgroundFlag = backgroundFlag;
+
+        this.hasMidCycleRangUpdate = false;
+    }
+
+    public StartRMData(long scanPeriod, long betweenScanPeriod, boolean backgroundFlag, long rangeUpdatePeriod, long betweenRangeUpdatePeriod) {
+        this.scanPeriod = scanPeriod;
+        this.betweenScanPeriod = betweenScanPeriod;
+        this.backgroundFlag = backgroundFlag;
+
+        this.hasMidCycleRangUpdate = true;
+        this.rangeUpdatePeriod = rangeUpdatePeriod;
+        this.betweenRangeUpdatePeriod = betweenRangeUpdatePeriod;
     }
 
     public StartRMData(Region region, String callbackPackageName, long scanPeriod, long betweenScanPeriod, boolean backgroundFlag) {
@@ -53,11 +70,29 @@ public class StartRMData implements Serializable, Parcelable {
         this.region = region;
         this.callbackPackageName = callbackPackageName;
         this.backgroundFlag = backgroundFlag;
+
+        this.hasMidCycleRangUpdate = false;
     }
+
+    public StartRMData(Region region, String callbackPackageName, long scanPeriod, long betweenScanPeriod, boolean backgroundFlag, long rangeUpdatePeriod, long betweenRangeUpdatePeriod) {
+        this.scanPeriod = scanPeriod;
+        this.betweenScanPeriod = betweenScanPeriod;
+        this.region = region;
+        this.callbackPackageName = callbackPackageName;
+        this.backgroundFlag = backgroundFlag;
+
+        this.hasMidCycleRangUpdate = true;
+        this.rangeUpdatePeriod = rangeUpdatePeriod;
+        this.betweenRangeUpdatePeriod = betweenRangeUpdatePeriod;
+    }
+
 
 
     public long getScanPeriod() { return scanPeriod; }
     public long getBetweenScanPeriod() { return betweenScanPeriod; }
+    public boolean hasMidCycleRangeUpdates() { return hasMidCycleRangUpdate; }
+    public long getRangeUpdatePeriod() { return rangeUpdatePeriod; }
+    public long getBetweenRangeUpdatePeriod() {return betweenRangeUpdatePeriod;}
     public Region getRegionData() {
         return region;
     }
@@ -75,6 +110,9 @@ public class StartRMData implements Serializable, Parcelable {
         out.writeLong(scanPeriod);
         out.writeLong(betweenScanPeriod);
         out.writeByte((byte) (backgroundFlag ? 1 : 0));
+        out.writeByte((byte) (hasMidCycleRangUpdate ? 1 : 0));
+        out.writeLong(rangeUpdatePeriod);
+        out.writeLong(betweenRangeUpdatePeriod);
     }
 
     public static final Parcelable.Creator<StartRMData> CREATOR
@@ -94,6 +132,9 @@ public class StartRMData implements Serializable, Parcelable {
         scanPeriod = in.readLong();
         betweenScanPeriod = in.readLong();
         backgroundFlag = in.readByte() != 0;
+        hasMidCycleRangUpdate = in.readByte() != 0;
+        rangeUpdatePeriod = in.readLong();
+        betweenRangeUpdatePeriod = in.readLong();
     }
 
 }
