@@ -36,6 +36,7 @@ public abstract class CycledLeScanner {
 
     private boolean mIsMidScanRangeUpdate = false;
     private long mRangeCycleUpdateTime = 0l;
+    private Runnable mMidRangeRunnable = null;
 
     private boolean mScanning;
     protected boolean mScanningPaused;
@@ -70,6 +71,13 @@ public abstract class CycledLeScanner {
         mScanThread = new HandlerThread("CycledLeScannerThread");
         mScanThread.start();
         mScanHandler = new Handler(mScanThread.getLooper());
+
+        mMidRangeRunnable = new Runnable() {
+            @Override
+            public void run() {
+                scheduleCycleRangeUpdate();
+            }
+        };
     }
 
     public static CycledLeScanner createScanner(Context context, long scanPeriod, long betweenScanPeriod, boolean backgroundFlag, CycledLeScanCallback cycledLeScanCallback, BluetoothCrashResolver crashResolver) {
@@ -259,12 +267,7 @@ public abstract class CycledLeScanner {
         //Update Range after a pre-defined update period.
         long milliscondsUntilRangeUpdate = mRangeCycleUpdateTime - SystemClock.elapsedRealtime();
         if(milliscondsUntilRangeUpdate > 0 ) {
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    scheduleCycleRangeUpdate();
-                }
-            }, milliscondsUntilRangeUpdate > 1000 ? 1000 : milliscondsUntilRangeUpdate);
+            mHandler.postDelayed(mMidRangeRunnable, milliscondsUntilRangeUpdate > 1000 ? 1000 : milliscondsUntilRangeUpdate);
         }
         else {
             mCycledLeScanCallback.onMidScanRange();
@@ -290,6 +293,7 @@ public abstract class CycledLeScanner {
                 }
             }, millisecondsUntilStop > 1000 ? 1000 : millisecondsUntilStop);
         } else {
+            mHandler.removeCallbacks(mMidRangeRunnable);
             finishScanCycle();
         }
     }
