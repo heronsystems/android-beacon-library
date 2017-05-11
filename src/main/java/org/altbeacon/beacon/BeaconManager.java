@@ -235,7 +235,8 @@ public class BeaconManager {
     }
 
     public void setBackgroundRangeUpdatePeriod(long p) {
-        foregroundRangeMidScan = true;
+
+        backgroundRangeMidScan = true;
         backgroundRangeUpdatePeriod = p;
     }
 
@@ -245,7 +246,7 @@ public class BeaconManager {
 
     public void setForegroundRangeUpdatePeriod(long p) {
 
-        backgroundRangeMidScan = true;
+        foregroundRangeMidScan = true;
         foregroundRangeUpdatePeriod = p;
     }
 
@@ -730,7 +731,13 @@ public class BeaconManager {
         }
         LogManager.d(TAG, "Starting monitoring region "+region+" with uniqueID: "+region.getUniqueId());
         Message msg = Message.obtain(null, BeaconService.MSG_START_MONITORING, 0, 0);
-        StartRMData obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
+        StartRMData obj = null;
+        if (this.isRangeUpdateMidCycle()) {
+            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
+        }
+        else {
+            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode);
+        }
         msg.obj = obj;
         serviceMessenger.send(msg);
         this.requestStateForRegion(region);
