@@ -50,6 +50,7 @@ import org.altbeacon.beacon.distance.ModelSpecificDistanceCalculator;
 import org.altbeacon.beacon.logging.LogManager;
 import org.altbeacon.beacon.service.scanner.CycledLeScanCallback;
 import org.altbeacon.beacon.service.scanner.CycledLeScanner;
+import org.altbeacon.beacon.service.scanner.DistinctPacketDetector;
 import org.altbeacon.beacon.service.scanner.NonBeaconLeScanCallback;
 import org.altbeacon.beacon.startup.StartupBroadcastReceiver;
 import org.altbeacon.bluetooth.BluetoothCrashResolver;
@@ -74,7 +75,6 @@ import static android.app.PendingIntent.getBroadcast;
  * @author dyoung
  */
 
-@TargetApi(5)
 public class BeaconService extends Service {
     public static final String TAG = "BeaconService";
 
@@ -91,7 +91,8 @@ public class BeaconService extends Service {
     private boolean mBackgroundFlag = false;
     private ExtraDataBeaconTracker mExtraDataBeaconTracker;
     private ExecutorService mExecutor;
-
+    private final DistinctPacketDetector mDistinctPacketDetector = new DistinctPacketDetector();
+    
     /*
      * The scan period is how long we wait between restarting the BLE advertisement scans
      * Each time we restart we only see the unique advertisements once (e.g. unique beacons)
@@ -384,6 +385,7 @@ public class BeaconService extends Service {
 
         @Override
         public void onCycleEnd() {
+            mDistinctPacketDetector.clearDetections();
             monitoringStatus.updateNewlyOutside();
             processRangeData();
             // If we want to use simulated scanning data, do it here.  This is used for testing in an emulator
@@ -504,6 +506,13 @@ public class BeaconService extends Service {
             }
             if (beacon != null) {
                 mDetectionTracker.recordDetection();
+                if (!mCycledScanner.getDistinctPacketsDetectedPerScan()) {
+                    if (!mDistinctPacketDetector.isPacketDistinct(scanData.device.getAddress(),
+                            scanData.scanRecord)) {
+                        LogManager.i(TAG, "Non-distinct packets detected in a single scan.  Restarting scans unecessary.");
+                        mCycledScanner.setDistinctPacketsDetectedPerScan(true);
+                    }
+                }
                 trackedBeaconsPacketCount++;
                 processBeaconFromScan(beacon);
             } else {
