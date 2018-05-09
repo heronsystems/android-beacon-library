@@ -1,4 +1,121 @@
-### Development
+### 2.13.1 / 2018-03-05
+
+[Full Changelog](https://github.com/AltBeacon/android-beacon-library/compare/2.13.1...2.13)
+
+ Bug Fixes:
+ - Fix incorrect immediateScanJobId meta-data name in manifest causing crash  (#653, David G. Young)
+
+
+### 2.13 / 2018-03-05
+
+[Full Changelog](https://github.com/AltBeacon/android-beacon-library/compare/2.12.4...2.13)
+
+Enhancements:
+ - Add BluetoothMedic to fix crashing bluetooth stacks.  (#644, David G. Young)
+ - Allow configuring job ids (#645, David G. Young)
+
+ Bug Fixes:
+ - Allow scans with screen off on Android 8.1 (#637, David G. Young)
+
+### 2.12.4 / 2017-12-16
+
+[Full Changelog](https://github.com/AltBeacon/android-beacon-library/compare/2.12.3...2.12.4)
+
+Bug Fixes:
+ - Fix performance problems when using identifiers 3-15 bytes caused by
+   Identifier#toHexString(). (#615, David G. Young)
+ - Restore missing runningAverageRssi values  (#621, David G. Young)
+ - Fix NPE on ExtraBeaconDataTracker (#626, David G. Young)
+ - Fix regression with `RunningAverageRssiFilter.setSampleExpirationMilliseconds`
+   being overwritten when committing ranged beacon measurements. (#629, Aaron Kromer)
+ - Fix missing running average RSSI in callbacks when apps do not use the
+   scheduled scan job feature. (#630, Aaron Kromer)
+ - Fix copying of multi-frame beacon flag in `Beacon(Beacon)` constructor (#630, Aaron Kromer)
+ - Fix the `AltBeaon(Beacon)` copy constructor which omitted some data fields (#630, Aaron Kromer)
+
+### 2.12.3 / 2017-10-14
+
+[Full Changelog](https://github.com/AltBeacon/android-beacon-library/compare/2.12.2...2.12.3)
+
+Bug Fixes:
+ - Fix NullPointerException in ProcessUtils.  (#598, David G. Young)
+ - Fix ConcurrentModificationException crashing app on Android 8 when monitored regions are
+   changed at the same time the app shifts from active scanning to passive scanning.
+   (#578, David G. Young)
+ - Fix ConcurrentModifictionExceptions starting ScanJobs.  (#584, #588, David G. Young)
+ - Fix NullPointerException when BluetoothLeScanner cannot be obtained.
+   (#583, David G. Young)
+
+### 2.12.2 / 2017-08-31
+
+[Full Changelog](https://github.com/AltBeacon/android-beacon-library/compare/2.12.1...2.12.2)
+
+Bug Fixes:
+ - Fix stack overflow caused by scan period of zero seconds, caused by 2.12 upgrade of existing
+  apps.  (#572, David G. Young)
+ - Suppress error log on ScanState deserialization if file does not exist yet.
+   (#570, David G. Young)
+ - Turn off scanning after unbind, which was previously left on forever in some cases.
+  (#569, David G. Young)
+
+### 2.12.1 / 2017-08-16
+
+[Full Changelog](https://github.com/AltBeacon/android-beacon-library/compare/2.12...2.12.1)
+
+
+Bug Fixes:
+ - Fix crash on Android 8.0 background scan when bluetooth is off.
+   (#562 Juliane Lehmann)
+ - Fix "Scanning too frequently" error with non-zero betweenScanPeriod
+   and scanPeriod+betweenScanPeriod < 6000, and full-power scanning
+   staying on for foreground scans with a non-zero betweenScanPeriod
+   (#555, David G. Young)
+
+
+### 2.12 / 2017-08-07
+
+[Full Changelog](https://github.com/AltBeacon/android-beacon-library/compare/2.11...2.12)
+
+Enhancements:
+ - Add Android O support with ScanJob using  JobScheduler to do scans instead of BeaconService,
+   set as default for Android O. (#484, David G. Young)
+
+Bug Fixes:
+
+ - Correct accessor method for Beacon#getRunningAverageRssi()
+   (#536, Pietro De Caro)
+
+### 2.11 / 2017-06-28
+
+[Full Changelog](https://github.com/AltBeacon/android-beacon-library/compare/2.10...2.11)
+
+Enhancements:
+
+- Add ability to circumvent prohibition against scans running for > 30 minutes on Android N.
+  (#529, David G. Young)
+- Add support for running the beacon scanning service in a separate process and working with
+  application setups that have more than one process. (#479, David G. Young)
+
+Bug Fixes:
+
+- Fix Google Play submission errors by no longer using uses-permission-sdk-23 in
+  Manifest (#527, David G. Young)
+- Fix inability to use `RunningAverageRssiFilter.setSampleExpirationMilliseconds(...)` (#523,
+  David G. Young)
+- Fix failure to restart scanning in some cases after bluetooth has been off but then is turned
+  back on. (#519, David G. Young)
+- Fix failure to stop scanning when unbinding from service or when the between scan period
+  is nonzero. (#507, David G. Young)
+- Fix possible `NullPointerException` with `BackgroundPowerSaver` on devices
+  prior to Android 4.3 Jelly Bean MR 2 (API 18) (#516, Aaron Kromer)
+- Fix rare edge case causing `NoSuchElementException` when using the legacy
+  `BeaconManager#getMonitoringNotifier` and `BeaconManager#getRangingNotifier`
+  where the notifier sets were modified external to `BeaconManager` by another
+  thread (#516, Aaron Kromer)
+
+### 2.10 / 2017-04-21
+
+[Full Changelog](https://github.com/AltBeacon/android-beacon-library/compare/2.9.2...2.10)
 
 Enhancements:
 
