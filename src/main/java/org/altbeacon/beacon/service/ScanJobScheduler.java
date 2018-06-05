@@ -175,13 +175,18 @@ public class ScanJobScheduler {
                 .setPersisted(true) // This makes it restart after reboot
                 .setExtras(new PersistableBundle());
 
+
+        //Madison Blake Modification
+        int scanJobIntervalMillis = scanState.getScanJobIntervalMillis();
+        //End Madison Blake Added. scanState.getScanJobIntervalMillis() now replaced with scanJobIntervalMillis
+
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // ON Android N+ we specify a tolerance of 0ms (capped at 5% by the OS) to ensure
             // our scans happen within 5% of the schduled time.
-            periodicJobBuilder.setPeriodic(scanState.getScanJobIntervalMillis(), 0L).build();
+            periodicJobBuilder.setPeriodic(scanJobIntervalMillis, 0L).build();
         }
         else {
-            periodicJobBuilder.setPeriodic(scanState.getScanJobIntervalMillis()).build();
+            periodicJobBuilder.setPeriodic(scanJobIntervalMillis).build();
         }
         // On Android O I see this:
         //

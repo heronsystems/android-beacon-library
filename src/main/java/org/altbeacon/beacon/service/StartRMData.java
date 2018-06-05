@@ -160,6 +160,9 @@ public class StartRMData implements Serializable, Parcelable {
         bundle.putLong(BETWEEN_SCAN_PERIOD_KEY, this.mBetweenScanPeriod);
         bundle.putBoolean(BACKGROUND_FLAG_KEY, this.mBackgroundFlag);
         bundle.putString(CALLBACK_PACKAGE_NAME_KEY, this.mCallbackPackageName);
+        bundle.putBoolean(HAS_MIDCYCLE_RANG_UPDATE_KEY, this.hasMidCycleRangUpdate);
+        bundle.putLong(BETWEEN_RANGE_UPDATE_PERIOD_KEY, this.betweenRangeUpdatePeriod);
+        bundle.putLong(RANGE_UPDATE_PERIOD_KEY, this.rangeUpdatePeriod);
         if (mRegion != null) {
             bundle.putSerializable(REGION_KEY, mRegion);
         }

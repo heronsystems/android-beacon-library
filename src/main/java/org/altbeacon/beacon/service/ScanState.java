@@ -51,6 +51,12 @@ public class ScanState implements Serializable {
     private long mLastScanStartTimeMillis = 0l;
     private transient Context mContext;
 
+    private boolean mHasMidRangeUpdate;
+    private long mMidRangeUpdatePeriod;
+
+    public Boolean hasMidRangePeriod() { return mHasMidRangeUpdate; }
+    public Long GetRangeUpdatePeriod() { return mMidRangeUpdatePeriod; }
+
     public Boolean getBackgroundMode() {
         return mBackgroundMode;
     }
@@ -266,6 +272,9 @@ public class ScanState implements Serializable {
         mBackgroundScanPeriod = beaconManager.getBackgroundScanPeriod();
         mBackgroundBetweenScanPeriod = beaconManager.getBackgroundBetweenScanPeriod();
         mBackgroundMode = beaconManager.getBackgroundMode();
+
+        mHasMidRangeUpdate = beaconManager.isRangeUpdateMidCycle();
+        mMidRangeUpdatePeriod = beaconManager.getRangeUpdatePeriod();
 
         ArrayList<Region> existingMonitoredRegions = new ArrayList<>(mMonitoringStatus.regions());
         ArrayList<Region> existingRangedRegions = new ArrayList<>(mRangedRegionState.keySet());

@@ -886,19 +886,7 @@ public class BeaconManager {
         if (determineIfCalledFromSeparateScannerProcess()) {
             return;
         }
-//<<<<<<< HEAD
-//        Message msg = Message.obtain(null, BeaconService.MSG_STOP_RANGING, 0, 0);
-//        StartRMData obj;
-//        if (this.isRangeUpdateMidCycle()) {
-//            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
-//        }
-//        else {
-//            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode);
-//        }
-//        msg.obj = obj;
-//        serviceMessenger.send(msg);
-//=======
-//>>>>>>> f350af4e40d96d8538ccefae5f24a9029f6ad5ed
+
         synchronized (rangedRegions) {
             Region regionToRemove = null;
             for (Region rangedRegion : rangedRegions) {
@@ -970,20 +958,8 @@ public class BeaconManager {
         if (isScannerInDifferentProcess()) {
             MonitoringStatus.getInstanceForApplication(mContext).addLocalRegion(region);
         }
-//<<<<<<< HEAD
         LogManager.d(TAG, "Starting monitoring region "+region+" with uniqueID: "+region.getUniqueId());
-//        Message msg = Message.obtain(null, BeaconService.MSG_START_MONITORING, 0, 0);
-//        StartRMData obj = null;
-//        if (this.isRangeUpdateMidCycle()) {
-//            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
-//        }
-//        else {
-//            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode);
-//        }
-//        msg.obj = obj;
-//        serviceMessenger.send(msg);
-//=======
-//>>>>>>> f350af4e40d96d8538ccefae5f24a9029f6ad5ed
+
         this.requestStateForRegion(region);
     }
 
@@ -1014,19 +990,6 @@ public class BeaconManager {
         if (isScannerInDifferentProcess()) {
             MonitoringStatus.getInstanceForApplication(mContext).removeLocalRegion(region);
         }
-//<<<<<<< HEAD
-//        Message msg = Message.obtain(null, BeaconService.MSG_STOP_MONITORING, 0, 0);
-//        StartRMData obj;
-//        if (this.isRangeUpdateMidCycle()) {
-//            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
-//        }
-//        else {
-//            obj = new StartRMData(region, callbackPackageName(), this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode);
-//        }
-//        msg.obj = obj;
-//        serviceMessenger.send(msg);
-//=======
-//>>>>>>> f350af4e40d96d8538ccefae5f24a9029f6ad5ed
     }
 
     /**
@@ -1046,17 +1009,7 @@ public class BeaconManager {
         }
         LogManager.d(TAG, "updating background flag to %s", mBackgroundMode);
         LogManager.d(TAG, "updating scan period to %s, %s", this.getScanPeriod(), this.getBetweenScanPeriod());
-//<<<<<<< HEAD
-//        StartRMData obj;
-//        if (this.isRangeUpdateMidCycle()) {
-//            obj = new StartRMData(this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode, this.getRangeUpdatePeriod(), this.getBetweenRangeUpdatePeriod());
-//        }
-//        else
-//        {
-//            obj = new StartRMData(this.getScanPeriod(), this.getBetweenScanPeriod(), this.mBackgroundMode);
-//        }
-//        msg.obj = obj;
-//=======
+
         applyChangesToServices(BeaconService.MSG_SET_SCAN_PERIODS, null);
     }
 
@@ -1090,7 +1043,6 @@ public class BeaconManager {
                 msg.setData(new StartRMData(region, callbackPackageName(), getScanPeriod(), getBetweenScanPeriod(), mBackgroundMode).toBundle());
             }
         }
-//>>>>>>> f350af4e40d96d8538ccefae5f24a9029f6ad5ed
         serviceMessenger.send(msg);
     }
 
@@ -1319,7 +1271,7 @@ public class BeaconManager {
         }
     }
 
-    private boolean isRangeUpdateMidCycle() {
+    public boolean isRangeUpdateMidCycle() {
         if(mBackgroundMode) {
             return backgroundRangeMidScan;
         }
@@ -1328,7 +1280,7 @@ public class BeaconManager {
         }
     }
 
-    private long getRangeUpdatePeriod() {
+    public long getRangeUpdatePeriod() {
         if(mBackgroundMode) {
             return backgroundRangeUpdatePeriod;
         }

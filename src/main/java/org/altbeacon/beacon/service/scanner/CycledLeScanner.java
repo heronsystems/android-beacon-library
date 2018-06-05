@@ -177,7 +177,7 @@ public abstract class CycledLeScanner {
         mLongScanForcingEnabled = enabled;
     }
 
-    public void setRangeUpdatePeriods(long rangeUpdatePeriod, long betweenRangeUpdate) {
+    public void setRangeUpdatePeriods(long rangeUpdatePeriod) {
         mMidScanRangeUpdatePeriod = rangeUpdatePeriod;
         mIsMidScanRangeUpdate = true;
     }
@@ -198,6 +198,7 @@ public abstract class CycledLeScanner {
         mBackgroundFlag = backgroundFlag;
         mScanPeriod = scanPeriod;
         mBetweenScanPeriod = betweenScanPeriod;
+
         if (mBackgroundFlag) {
             LogManager.d(TAG, "We are in the background.  Setting wakeup alarm");
             setWakeUpAlarm();

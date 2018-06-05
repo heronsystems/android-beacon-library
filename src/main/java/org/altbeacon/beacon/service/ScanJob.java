@@ -188,9 +188,19 @@ public class ScanJob extends JobService {
         }
         long scanPeriod = mScanState.getBackgroundMode() ? mScanState.getBackgroundScanPeriod() : mScanState.getForegroundScanPeriod();
         long betweenScanPeriod = mScanState.getBackgroundMode() ? mScanState.getBackgroundBetweenScanPeriod() : mScanState.getForegroundBetweenScanPeriod();
+
+        //MTB - No distintion between background and foreground here
+        boolean hasRangeUpdatedPeriod = mScanState.hasMidRangePeriod();
+        long rangeUpdatedPeriod = mScanState.getBackgroundMode() ? mScanState.GetRangeUpdatePeriod() : mScanState.GetRangeUpdatePeriod();
+
         mScanHelper.getCycledScanner().setScanPeriods(scanPeriod,
                                                       betweenScanPeriod,
                                                       mScanState.getBackgroundMode());
+
+        if(hasRangeUpdatedPeriod == true) {
+            mScanHelper.getCycledScanner().setRangeUpdatePeriods(rangeUpdatedPeriod);
+        }
+
         mInitialized = true;
         if (scanPeriod <= 0) {
             LogManager.w(TAG, "Starting scan with scan period of zero.  Exiting ScanJob.");

@@ -374,7 +374,7 @@ public class BeaconService extends Service {
     }
 
     public void setRangeUpdatePeriods(long rangeUpdatePeriod, long betweenRangeUpdatePeriod) {
-        mScanHelper.getCycledScanner().setRangeUpdatePeriods(rangeUpdatePeriod, betweenRangeUpdatePeriod);
+        mScanHelper.getCycledScanner().setRangeUpdatePeriods(rangeUpdatePeriod);
     }
 
 //    protected final CycledLeScanCallback mCycledLeScanCallback = new CycledLeScanCallback() {
