@@ -92,6 +92,16 @@ public class ScanJobScheduler {
         applySettingsToScheduledJob(context, beaconManager, scanState);
     }
 
+    public void cancelSchedule(Context context) {
+        JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.cancel(ScanJob.getImmediateScanJobId(context));
+        jobScheduler.cancel(ScanJob.getPeriodicScanJobId(context));
+
+        if (mBeaconNotificationProcessor != null) {
+            mBeaconNotificationProcessor.unregister();
+        }
+    }
+
     // This method appears to be never used, because it is only used by Android O APIs, which
     // must exist on another branch until the SDKs are released.
     public void scheduleAfterBackgroundWakeup(Context context, List<ScanResult> scanResults) {

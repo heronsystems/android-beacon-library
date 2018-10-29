@@ -129,8 +129,9 @@ class ScanHelper {
             new ScanHelper.ScanProcessor(nonBeaconLeScanCallback).executeOnExecutor(mExecutor,
                     new ScanHelper.ScanData(device, rssi, scanRecord));
         } catch (RejectedExecutionException e) {
-
             LogManager.w(TAG, "Ignoring scan result because we cannot keep up.");
+        } catch (OutOfMemoryError e) {
+            LogManager.w(TAG, "Ignoring scan result because we cannot start a thread to keep up.");
         }
     }
 
@@ -196,6 +197,9 @@ class ScanHelper {
             }
         } catch (SecurityException e) {
             LogManager.e(TAG, "SecurityException stopping Android O background scanner");
+        } catch (RuntimeException e) {
+            // Needed to stop a crash caused by internal Android throw.  See issue #701
+            LogManager.e(TAG, "Unexpected runtime exception stopping Android O background scanner", e);
         }
     }
 
@@ -218,31 +222,13 @@ class ScanHelper {
         @MainThread
         @SuppressLint("WrongThread")
         public void onCycleEnd() {
-            mDistinctPacketDetector.clearDetections();
-            mMonitoringStatus.updateNewlyOutside();
-            processRangeData();
-            // If we want to use simulated scanning data, do it here.  This is used for testing in an emulator
-            if (mSimulatedScanData != null) {
-                // if simulatedScanData is provided, it will be seen every scan cycle.  *in addition* to anything actually seen in the air
-                // it will not be used if we are not in debug mode
-                LogManager.w(TAG, "Simulated scan data is deprecated and will be removed in a future release. Please use the new BeaconSimulator interface instead.");
-
-                if (0 != (mContext.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE)) {
-                    for (Beacon beacon : mSimulatedScanData) {
-                        // This is an expensive call and we do not want to block the main thread.
-                        // But here we are in debug/test mode so we allow it on the main thread.
-                        //noinspection WrongThread
-                        processBeaconFromScan(beacon);
-                    }
-                } else {
-                    LogManager.w(TAG, "Simulated scan data provided, but ignored because we are not running in debug mode.  Please remove simulated scan data for production.");
-                }
-            }
             if (BeaconManager.getBeaconSimulator() != null) {
+                LogManager.d(TAG, "Beacon simulator enabled");
                 // if simulatedScanData is provided, it will be seen every scan cycle.  *in addition* to anything actually seen in the air
                 // it will not be used if we are not in debug mode
                 if (BeaconManager.getBeaconSimulator().getBeacons() != null) {
                     if (0 != (mContext.getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE)) {
+                        LogManager.d(TAG, "Beacon simulator returns "+BeaconManager.getBeaconSimulator().getBeacons().size()+" beacons.");
                         for (Beacon beacon : BeaconManager.getBeaconSimulator().getBeacons()) {
                             // This is an expensive call and we do not want to block the main thread.
                             // But here we are in debug/test mode so we allow it on the main thread.
@@ -256,6 +242,14 @@ class ScanHelper {
                     LogManager.w(TAG, "getBeacons is returning null. No simulated beacons to report.");
                 }
             }
+            else {
+                if (LogManager.isVerboseLoggingEnabled()) {
+                    LogManager.d(TAG, "Beacon simulator not enabled");
+                }
+            }
+            mDistinctPacketDetector.clearDetections();
+            mMonitoringStatus.updateNewlyOutside();
+            processRangeData();
         }
 
         @Override

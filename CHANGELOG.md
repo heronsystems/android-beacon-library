@@ -1,3 +1,41 @@
+### 2.15.2 / 2018-10-17
+
+- Prevent infrequent out of memory crashes on Android 8+ (#750 Pappas Christodoulos, David G. Young)
+- Prevent duplicate ranging/monitoring callbacks casued by bind/unbind with a service
+  (#748, Adrián Nieto Rodríguez, #745, David G. Young)
+- Allow starting foreground service at boot (#746, David G. Young)
+- Re-enable broken BeaconSimulator (#751, David G. Young)
+
+### 2.15.1 / 2018-09-01
+
+ - Prevent crash caused by internal Android exception when stopping scanning (#724, David G. Young)
+ - Fix Android 8 crashing apps on background monitoring/ranging data delivery (#720, David G. Young)
+ - Fix intermittent NPE on ranging beacons (#716, Federico Bertoli, David G. Young)
+ - Stop running scheduled jobs to do scans after last consumer unbound. (#702, David G. Young)
+
+### 2.15 / 2018-07-04
+
+Enhancements:
+ - Optional foreground beacon scanning service for faster background detections on Android 8+
+   (#663, David G. Young)
+
+Bug Fixes:
+ - Fixes inability to detect on some 5.x Samsung Devices without scan filters. (#693, David G. Young)
+ - Fix inverted logic for "disable ScanJob" warning (#700, Marcel Schnelle)
+ - Fix crash on scanning an Eddystone-URL packet with a negative-length URL. (#703, David G. Young)
+
+### 2.14 / 2018-05-17
+
+Enhancements:
+
+ - Add warnings about disabling scheduled scan jobs on Android 8+ (#674, David G. Young)
+ - Add warning about setting short scan periods on Android 8 (#677, David G. Young)
+ - BeaconTransmitter advertisements may be configured as connectable (#683, Michael Harper)
+
+Bug Fixes:
+ - Fix crashes of BluetoothMedic caused by Bluetooth being turned off (#675, David G. Young) 
+ - Fix flawed in BeaconManager.isBound method on Android 8 (#655, David G. Young)
+
 ### 2.13.1 / 2018-03-05
 
 [Full Changelog](https://github.com/AltBeacon/android-beacon-library/compare/2.13.1...2.13)
