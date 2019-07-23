@@ -1,3 +1,86 @@
+### Development
+
+- Fix thread leak with 0 regions and settings applied, (#888, David G. Young)
+- Prevent NPE when ScanState restore hangs or ScanJob thread is slow to start (#890, David G. Young)
+- Prevent crash from IAE when ending scan cycle (#891, David G. Young)
+- Prevent NPE in BluetoothMedic#runScanTest. (#893 Van Hoang Tran)
+
+### 2.16.2 / 2019-05-29
+
+- Prevent crash on alarms going off with a different user active (#886, David G. Young)
+- Fix thread leak caused by scheduling ScanJob when no consumers bound. (#885, David G. Young)
+- Protect against a NPE when changing ranged regions.  (#770, David G. Young)
+- Fix intermittent failed ranging/monitoring callbacks in race conditions. (#842, David G. Young) 
+- Prevent duplicate callbacks on Android 8+ with a foreground service by stopping ScanJob.  (#847, Stephen Ruda)
+- Only apply Samsung-specific non-empty scan filters when the screen is off (#855, Marcel Schnelle)
+
+### 2.16.1 / 2019-02-10
+
+- Fix crash on starting scanning with a forground service configured when multiple BeaconConsumer
+  instances bound.  (#828, David G. Young)
+- Fix broken RegionBoostrap callbacks caused by change in previous release (#829, David G. Young)
+
+### 2.16 / 2019-02-10
+
+- New Region Bootstrap constructors allowing separate context and notifir (#821, Alper Tekin)
+- Fix intermittent crash caused by internal Android NPE (#824, kababu007)
+- Update gradle and robolectric (#805, Tony Tang)
+- Fix problem on service shutdown that leaked threads and left scanning on (#804, David G. Young)
+
+### 2.15.4 / 2018-12-11
+
+- Fix crash on BluetoothCrashResolver (#790, Michael Porter)
+
+### 2.15.3 / 2018-12-11
+
+- Samsung screen-off scans on Android 8.1+ fixed.  (#798, David G. Young)
+- Fix bug preventing callbacks after unbind/bind when using ScanJobs.  (#765, David G. Young)
+- Prevent NPE on access CycledLEScanner after OOM on Android 8+.  (#766, David G. Young)
+- Make switching back and forth between a foreground service and scan jobs more reliable
+(#767, David G. Young)
+- Disable BluetoothCrashResolver on Android 5+ as a it is not helpful can can create log noise.
+   (#768, David G. Young)
+- Prevent NPE on start scan. (#780, Adrián Nieto Rodríguez)
+- Fix thread leak leading to OOM Exceptions when using ScanJobs (#785, David G. Young)
+
+### 2.15.2 / 2018-10-17
+
+- Prevent infrequent out of memory crashes on Android 8+ (#750 Pappas Christodoulos, David G. Young)
+- Prevent duplicate ranging/monitoring callbacks casued by bind/unbind with a service
+  (#748, Adrián Nieto Rodríguez, #745, David G. Young)
+- Allow starting foreground service at boot (#746, David G. Young)
+- Re-enable broken BeaconSimulator (#751, David G. Young)
+
+### 2.15.1 / 2018-09-01
+
+ - Prevent crash caused by internal Android exception when stopping scanning (#724, David G. Young)
+ - Fix Android 8 crashing apps on background monitoring/ranging data delivery (#720, David G. Young)
+ - Fix intermittent NPE on ranging beacons (#716, Federico Bertoli, David G. Young)
+ - Stop running scheduled jobs to do scans after last consumer unbound. (#702, David G. Young)
+
+### 2.15 / 2018-07-04
+
+Enhancements:
+ - Optional foreground beacon scanning service for faster background detections on Android 8+
+   (#663, David G. Young)
+
+Bug Fixes:
+ - Fixes inability to detect on some 5.x Samsung Devices without scan filters. (#693, David G. Young)
+ - Fix inverted logic for "disable ScanJob" warning (#700, Marcel Schnelle)
+ - Fix crash on scanning an Eddystone-URL packet with a negative-length URL. (#703, David G. Young)
+
+### 2.14 / 2018-05-17
+
+Enhancements:
+
+ - Add warnings about disabling scheduled scan jobs on Android 8+ (#674, David G. Young)
+ - Add warning about setting short scan periods on Android 8 (#677, David G. Young)
+ - BeaconTransmitter advertisements may be configured as connectable (#683, Michael Harper)
+
+Bug Fixes:
+ - Fix crashes of BluetoothMedic caused by Bluetooth being turned off (#675, David G. Young) 
+ - Fix flawed in BeaconManager.isBound method on Android 8 (#655, David G. Young)
+
 ### 2.13.1 / 2018-03-05
 
 [Full Changelog](https://github.com/AltBeacon/android-beacon-library/compare/2.13.1...2.13)

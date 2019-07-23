@@ -48,7 +48,7 @@ to use the JCenter Repository
 ```groovy
 dependencies {
     ...
-    compile 'org.altbeacon:android-beacon-library:${altbeacon.version}'
+    implementation 'org.altbeacon:android-beacon-library:${altbeacon.version}'
     ...
 }
 ```
@@ -58,14 +58,14 @@ replacing `${altbeacon.version}` with the version you wish to use.
 ## How to build this Library
 
 This project uses an AndroidStudio/gradle build system and is known working with Android Studio
-2.1 and Gradle 2.2.1
+3.4.1 and Gradle 5.1.1
 
 Key Gradle build targets:
 
     ./gradlew test # run unit tests
     ./gradlew build # development build
     ./gradlew release -Prelease # release build
-    ./gradlew generatereleaseJavadoc -Prelease
+    ./gradlew generateReleaseJavadoc
 
 ## License
 
